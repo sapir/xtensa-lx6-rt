@@ -13,10 +13,10 @@ fn main() {
         println!("cargo:rustc-link-lib=static=xtensa_vectors");
 
     // Put the linker script somewhere the linker can find it
-    File::create(out.join("link.x"))
-        .unwrap()
-        .write_all(include_bytes!("xtensa.in.x"))
-        .unwrap();
+    let mut link = File::create(out.join("link.x")).unwrap();
+    link.write_all(include_bytes!("xtensa.in.x")).unwrap();
+    link.write_all(b"\n").unwrap();
+    link.write_all(include_bytes!("esp32.rom.ld")).unwrap();
     println!("cargo:rustc-link-search={}", out.display());
 
     // Only re-run the build script when memory.x is changed,
